@@ -17,7 +17,7 @@ public:
     virtual const std::string& getName() const = 0;
     virtual int getPriority() const = 0;
 
-    std::chrono::microseconds timeSlice{100}; // Default time slice
+    std::chrono::microseconds timeSlice{100};
     std::chrono::steady_clock::time_point lastExecutionTime;
     bool isReady{true};
 };
@@ -30,15 +30,12 @@ private:
     std::atomic<bool> isRunning{false};
     std::thread schedulerThread;
 
-    // Scheduler configuration
     const std::chrono::milliseconds minTimeSlice{50};
     const std::chrono::milliseconds maxTimeSlice{200};
     
-    // Singleton pattern
     static TaskManager* instance;
     TaskManager() = default;
 
-    // Private scheduler methods
     void schedulerLoop();
     std::unique_ptr<Task>& selectNextTask();
     void executeTask(Task* task);
