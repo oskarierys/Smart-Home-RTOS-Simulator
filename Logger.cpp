@@ -6,9 +6,9 @@
 
 Logger* Logger::instance = nullptr;
 
-Logger::Logger()
+Logger::Logger() : consoleOutput(false)
 {
-    logFile.open("smart_home.log", std::ios::out | std::ios::app);
+    logFile.open("system.log", std::ios::app);
 }
 
 Logger::~Logger()
@@ -17,8 +17,6 @@ Logger::~Logger()
     {
         logFile.close();
     }
-    delete instance;
-    instance = nullptr;
 }
 
 Logger* Logger::getInstance()
@@ -31,28 +29,38 @@ Logger* Logger::getInstance()
     return instance;
 }
 
-void Logger::log(const std::string& message)
+void Logger::log(const std::string& message, bool toConsole)
 {
     std::lock_guard<std::mutex> lock(logMutex);
 
     auto now = std::chrono::system_clock::now();
-    auto time = std::chrono::system_clock::to_time_t(now);
-
-    std::tm tm_buf;
-    localtime_s(&tm_buf, &time);
-
-    std::string timeStr = std::string("[") +
-                            std::to_string(tm_buf.tm_year + 1900) + "-" +
-                            std::to_string(tm_buf.tm_mon + 1) + "-" +
-                            std::to_string(tm_buf.tm_mday) + " " +
-                            std::to_string(tm_buf.tm_hour) + ":" +
-                            std::to_string(tm_buf.tm_min) + ":" +
-                            std::to_string(tm_buf.tm_sec) + "] ";
-
-    std::cout << timeStr << message << std::endl;
+    auto timeT = std::chrono::system_clock::to_time_t(now);
+    struct tm timeInfo;
+    
+#ifdef _WIN32
+    localtime_s(&timeInfo, &timeT);
+#else
+    localtime_r(&timeT, &timeInfo);
+#endif
+    
+    char timeBuffer[25];
+    strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", &timeInfo);
+    
+    std::string logEntry = "[" + std::string(timeBuffer) + "] " + message;
     
     if (logFile.is_open())
     {
-        logFile << timeStr << message << std::endl;
+        logFile << logEntry << std::endl;
+        logFile.flush();
     }
+    
+    if (toConsole || consoleOutput)
+    {
+        std::cout << logEntry << std::endl;
+    }
+}
+
+void Logger::setConsoleOutput(bool enabled)
+{
+    consoleOutput = enabled;
 }

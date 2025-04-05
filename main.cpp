@@ -122,7 +122,9 @@ public:
 
 int main() {
     auto logger = Logger::getInstance();
-    logger -> log("Application started");
+
+    logger -> setConsoleOutput(false);;
+    logger -> log("Application started", true);
 
     auto taskManager = TaskManager::getInstance();
     taskManager -> addTask(std::make_unique<TemperatureSensorTask>("Temperature Sensor Task", 1));
@@ -131,7 +133,7 @@ int main() {
     ControlPanel controlPanel(taskManager);
     controlPanel.run();
 
-    logger -> log("Application stopped");
+    logger -> log("Application stopped", true);
 
     return 0;
 }

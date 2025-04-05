@@ -25,7 +25,7 @@ void TaskManager::startScheduler()
     {
         isRunning = true;
         schedulerThread = std::thread(&TaskManager::schedulerLoop, this);
-        Logger::getInstance() -> log("Scheduler started");
+        Logger::getInstance() -> log("Scheduler started", true);
     }
 }
 
@@ -40,7 +40,7 @@ void TaskManager::stopScheduler()
             schedulerThread.join();
         }
 
-        Logger::getInstance() -> log("Scheduler stopped");
+        Logger::getInstance() -> log("Scheduler stopped", true);
     }
 }
 
@@ -89,7 +89,7 @@ void TaskManager::executeTask(Task* task)
     {
         try
         {
-            Logger::getInstance() -> log("Executing task: " + task -> getName());
+            Logger::getInstance() -> log("Executing task: " + task -> getName(), false);
             task -> execute();
             task -> lastExecutionTime = std::chrono::steady_clock::now();
 
@@ -99,7 +99,7 @@ void TaskManager::executeTask(Task* task)
         }
         catch(const std::exception& e)
         {
-            Logger::getInstance() -> log("Error executing task: " + task -> getName() + " - " + e.what());
+            Logger::getInstance() -> log("Error executing task: " + task -> getName() + " - " + e.what(), true);
             task -> isReady = false;
         }
     }

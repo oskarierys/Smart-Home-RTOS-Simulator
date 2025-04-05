@@ -21,7 +21,7 @@ void TemperatureSensorTask::execute()
     if (elapsed >= 20)
     {
         float temperature = sensor->readValue();
-        Logger::getInstance()->log("Temperature Sensor Task: " + name + " - Temperature: " + std::to_string(temperature) + "°C");
+        Logger::getInstance()->log("Temperature Sensor Task: " + name + " - Temperature: " + std::to_string(temperature) + "°C", false);
         lastExecutionTime = now;
         
         isReady = false;
