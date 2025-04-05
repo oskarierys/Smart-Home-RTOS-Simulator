@@ -327,11 +327,11 @@ public:
 int main() {
     auto logger = Logger::getInstance();
 
-    logger->setConsoleOutput(false);
-    logger->log("Application started", true);
+    logger -> setConsoleOutput(false);
+    logger -> log("Application started", true);
 
     auto taskManager = TaskManager::getInstance();
-    
+
     auto temperatureSensorTask = std::make_unique<TemperatureSensorTask>("Temperature Sensor Task", 1);
     
     auto windowBlindTaskPtr = std::make_unique<WindowBlindTask>("Window Blind Control Task", 2);
@@ -340,16 +340,16 @@ int main() {
     auto lightControlTaskPtr = std::make_unique<LightControlTask>("Light Control Task", 3);
     LightControlTask* lightControlTaskRawPtr = lightControlTaskPtr.get();
 
-    taskManager->addTask(std::move(temperatureSensorTask));
-    taskManager->addTask(std::move(windowBlindTaskPtr));
-    taskManager->addTask(std::move(lightControlTaskPtr));
+    taskManager -> addTask(std::move(temperatureSensorTask));
+    taskManager -> addTask(std::move(windowBlindTaskPtr));
+    taskManager -> addTask(std::move(lightControlTaskPtr));
 
-    taskManager->startScheduler();
+    taskManager -> startScheduler();
 
     ControlPanel controlPanel(taskManager, windowBlindTaskRawPtr, lightControlTaskRawPtr);
     controlPanel.run();
 
-    logger->log("Application stopped", true);
+    logger -> log("Application stopped", true);
 
     return 0;
 }
