@@ -1,8 +1,9 @@
-#pragma once 
+#pragma once    
 
 #include "TaskManager.hpp"
 #include "Sensor.hpp"
-
+#include <string>    
+#include <memory>
 class TemperatureSensorTask : public Task {
 private:
     std::unique_ptr<TemperatureSensor> sensor;
@@ -10,7 +11,7 @@ private:
     int priority;
 
 public:
-    TemperatureSensorTask(const std::string taskName, int taskPriority);
+    TemperatureSensorTask(const std::string& taskName, int taskPriority);
     void execute() override;
     const std::string& getName() const override;
     int getPriority() const override;    
