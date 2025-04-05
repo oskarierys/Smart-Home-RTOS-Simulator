@@ -25,7 +25,7 @@ public:
 class TaskManager {
 private:
     std::vector<std::unique_ptr<Task>> tasks;
-    std::mutex taskMutex;
+    mutable std::mutex taskMutex;
     std::condition_variable scheduleCV;
     std::atomic<bool> isRunning{false};
     std::thread schedulerThread;
@@ -47,4 +47,14 @@ public:
     void startScheduler();
     void stopScheduler();
     ~TaskManager();
+
+    struct TaskStatistics
+    {
+        size_t totalTasks;
+        size_t activeTasks;
+        size_t completedTaskCount;
+        std::vector<std::pair<std::string, int>> taskPriorities;
+    };
+
+    TaskStatistics getStatistics() const;
 }; 

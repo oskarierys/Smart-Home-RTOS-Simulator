@@ -58,8 +58,6 @@ bool TaskManager::hasReadyTasks() const
 
 std::unique_ptr<Task>& TaskManager::selectNextTask()
 {
-    std::lock_guard<std::mutex> lock(taskMutex);
-
     auto highestPriorityTask = std::max_element(tasks.begin(), tasks.end(),
     [](const auto&a, const auto& b)
     {
@@ -73,7 +71,13 @@ std::unique_ptr<Task>& TaskManager::selectNextTask()
         return *highestPriorityTask;
     }
 
-    return tasks.front();
+    if (!tasks.empty())
+    {
+        return tasks.front();
+    }
+
+    static std::unique_ptr<Task> dummyTask;
+    return dummyTask;
 }
 
 void TaskManager::executeTask(Task* task)
@@ -103,34 +107,70 @@ void TaskManager::executeTask(Task* task)
 
 void TaskManager::schedulerLoop()
 {
-     while (isRunning)
-     {
-        std::unique_lock<std::mutex> lock(taskMutex);
+    while (isRunning)
+    {
+       std::this_thread::sleep_for(std::chrono::milliseconds(100));
+       
+       std::unique_lock<std::mutex> lock(taskMutex);
 
-        if (tasks.empty())
+       if (tasks.empty())
+       {
+           scheduleCV.wait(lock, [this]()
+           {
+               return !isRunning || !tasks.empty();
+           });
+           
+           if (!isRunning) break;
+           continue;
+       }
+
+       bool hasReady = hasReadyTasks();
+       if (!hasReady)
+       {
+           lock.unlock();
+           std::this_thread::sleep_for(std::chrono::milliseconds(500));
+           continue;
+       }
+
+       auto& nextTask = selectNextTask();
+       
+       if (!nextTask)
+       {
+           lock.unlock();
+           std::this_thread::sleep_for(std::chrono::milliseconds(100));
+           continue;
+       }
+       
+       lock.unlock();
+
+       if (nextTask->isReady)
+       {
+           executeTask(nextTask.get());
+           std::this_thread::sleep_for(std::chrono::milliseconds(200));
+       }
+    }
+}
+
+TaskManager::TaskStatistics TaskManager::getStatistics() const
+{
+    std::unique_lock<std::mutex> lock(taskMutex);
+    TaskStatistics stats;
+    stats.totalTasks = tasks.size();
+
+    stats.activeTasks = 0;
+    stats.completedTaskCount = 0;
+
+    for (const auto& task : tasks)
+    {
+        if (task -> isReady)
         {
-            scheduleCV.wait(lock, [this]()
-            {
-                return !isRunning || !tasks.empty();
-            });
+            stats.activeTasks++;
         }
 
-        if (!hasReadyTasks())
-        {
-            scheduleCV.wait_for(lock, std::chrono::milliseconds(10));
-            continue;
-        }
+        stats.taskPriorities.push_back({task -> getName(), task -> getPriority()});
+    }
 
-        auto& nextTask = selectNextTask();
-        lock.unlock();
-
-        if (nextTask -> isReady)
-        {
-            executeTask(nextTask.get());
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-     }
+    return stats;
 }
 
 

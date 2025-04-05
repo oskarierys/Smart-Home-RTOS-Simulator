@@ -1,6 +1,8 @@
 #include "Sensor.hpp"
 #include <random>
 
+float TemperatureSensor::lastReading = 0.0f;
+
 Sensor::Sensor(const std::string& sensorName) : name(sensorName), currentValue(0.0f) {}
 
 const std::string& Sensor::getName() const
@@ -16,7 +18,14 @@ float TemperatureSensor::readValue()
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> dis(20.0f, 30.0f);
-    
+
     currentValue = dis(gen);
+    lastReading = currentValue;
     return currentValue;
 }
+
+float TemperatureSensor::getLastReading()
+{
+    return lastReading;
+}
+

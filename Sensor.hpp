@@ -17,7 +17,10 @@ public:
 };
 
 class TemperatureSensor : public Sensor {
+private:
+    static float lastReading;
 public:
     explicit TemperatureSensor(const std::string& sensorName);
     float readValue() override;
+    static float getLastReading();
 };

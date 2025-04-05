@@ -9,6 +9,7 @@ private:
     std::unique_ptr<TemperatureSensor> sensor;
     std::string name;
     int priority;
+    std::chrono::steady_clock::time_point lastExecutionTime;
 
 public:
     TemperatureSensorTask(const std::string& taskName, int taskPriority);
