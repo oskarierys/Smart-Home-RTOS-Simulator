@@ -1,6 +1,5 @@
 #include "TaskManager.hpp"
 #include "Logger.hpp"
-#include "EventManager.hpp"
 #include "TemperatureSensorTask.hpp" 
 #include <iostream>
 #include <string>
