@@ -1,5 +1,66 @@
-# Ignore all .exe files
-*.exe
-
 # Ignore the .vscode folder
 .vscode/
+
+# Build directories
+build/
+bin/
+lib/
+out/
+cmake-build-*/
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vcxproj*
+*.swp
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.out
+*.app
+
+# Dependency directories
+_deps/
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+Makefile
+
+# Doxygen output
+doc/html/
+doc/latex/
+
+# Logs and data files
+*.log
+*.dat
+*.tmp
+*.temp
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+logs/
