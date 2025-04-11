@@ -1,16 +1,41 @@
 # Smart-Home-RTOS-Simulator
 
-The **Smart-Home-RTOS-Simulator** is a simulation project designed to emulate a real-time operating system (RTOS) for managing smart home devices. It includes tasks for controlling lights, window blinds, and temperature sensors, providing a modular and extensible framework for smart home automation.
+The **Smart-Home-RTOS-Simulator** is a C++ project designed to simulate a real-time operating system (RTOS) for managing smart home devices. The project demonstrates the use of modern C++ features, multithreading, and object-oriented programming to create a modular and extensible framework for smart home automation.
 
-## Features
+## Overview
 
-- **Task Management**: Centralized task scheduling and execution using the `TaskManager`.
-- **Light Control**: Manage room lights with time-based and motion-based rules.
-- **Window Blind Control**: Automate window blinds based on time and light intensity.
-- **Temperature Monitoring**: Simulate and monitor temperature readings.
-- **Logging**: Centralized logging system for debugging and monitoring.
+This simulator provides a centralized task management system (`TaskManager`) to schedule and execute tasks for controlling various smart home devices, such as lights, window blinds, and temperature sensors. The project is designed to emulate the behavior of an RTOS, where tasks are prioritized and executed based on their importance and readiness.
 
-## Getting Started
+### Key Components
+
+1. **Task Management**:
+   - The `TaskManager` class is the core of the system, responsible for scheduling and executing tasks.
+   - Tasks are represented as objects derived from the `Task` base class, allowing for extensibility and modularity.
+   - Tasks are prioritized and executed in a thread-safe manner using `std::mutex` and `std::condition_variable`.
+
+2. **Multithreading**:
+   - The project uses C++ standard threading libraries (`std::thread`, `std::mutex`, `std::condition_variable`) to simulate concurrent task execution.
+   - The scheduler runs in a separate thread, ensuring that tasks are executed without blocking the main control panel.
+
+3. **Device Control**:
+   - **Window Blinds**: The `WindowBlindTask` class manages the state of window blinds, allowing users to open, close, or set specific positions for each blind.
+   - **Lights**: The `LightControlTask` class provides functionality to control room lights, including turning them on/off and adjusting brightness levels.
+   - **Temperature Monitoring**: The `TemperatureSensorTask` class simulates a temperature sensor, providing periodic readings and warnings for abnormal temperatures.
+
+4. **Logging**:
+   - The `Logger` class provides a centralized logging system to record events and debug information.
+   - Logs can be output to the console or stored in a file for later analysis.
+
+5. **Command-Line Interface**:
+   - The `ControlPanel` class provides an interactive command-line interface for users to interact with the system.
+   - Users can issue commands to control devices, view system statistics, and monitor the overall status of the smart home.
+   
+### Technologies and Design Choices
+
+- **C++17**: The project leverages modern C++ features such as smart pointers (`std::unique_ptr`), `std::chrono` for time management, and `std::atomic` for thread-safe flags.
+- **Object-Oriented Design**: The use of classes and inheritance ensures a clean and modular design, making it easy to extend the system with new devices or features.
+- **Thread Safety**: The project uses synchronization primitives like `std::mutex` and `std::condition_variable` to ensure safe access to shared resources in a multithreaded environment.
+- **Extensibility**: The `Task` base class and the modular design of device controllers make it easy to add new tasks or devices to the system.
 
 ### Prerequisites
 
@@ -41,15 +66,28 @@ The **Smart-Home-RTOS-Simulator** is a simulation project designed to emulate a 
    ```
 ## Usage
 
-The application provides a command-line interface for interacting with the smart home system. Use the following commands:
+- `help`: Display a list of available commands and their descriptions.
+- `quit`: Exit the application and stop the scheduler.
+- `stats`: Show system statistics, including the total number of tasks, active tasks, system uptime, and task priorities.
+- `temp`: Display the latest temperature reading from the temperature sensor. Includes warnings for high or low temperatures.
+- `blinds`: Control window blinds with the following options:
+  - View the current status of all window blinds.
+  - Set the position of a specific window blind (e.g., Closed, Quarter Open, Half Open, etc.).
+  - Open all blinds.
+  - Close all blinds.
+- `lights`: Control room lights with the following options:
+  - View the current status of all room lights.
+  - Turn on or off a specific room light.
+  - Set the brightness level of a specific room light (e.g., Off, Low, Medium, High, Full).
+  - Turn on all lights.
+  - Turn off all lights.
+- `status`: Display the complete system status, including:
+  - Current temperature.
+  - System uptime.
+  - Status of all room lights.
+  - Status of all window blinds.
 
-- `help`: Display available commands.
-- `stats`: Show system statistics.
-- `temp`: Display the current temperature.
-- `blinds`: Control window blinds.
-- `lights`: Control room lights.
-- `status`: Show the complete system status.
-- `quit`: Exit the application.
+Simply type the command in the terminal and follow the on-screen instructions for interactive options.
 
 ## Contributing
 
